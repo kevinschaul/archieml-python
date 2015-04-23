@@ -17,7 +17,7 @@ class Lexer(object):
         'OPEN_SKIP',
         'CLOSE_SKIP',
         'OPEN_IGNORE',
-        'KEYTEXT',
+        'IDENTIFIER',
         'TEXT',
     )
 
@@ -39,12 +39,12 @@ class Lexer(object):
     def __init__(self):
         self.lexer = lex.lex(module=self)
 
-    def t_KEYTEXT(self, t):
+    def t_IDENTIFIER(self, t):
         r'[a-zA-Z0-9-_]+'
         return t
 
     def t_TEXT(self, t):
-        # TODO Why do we have to escape tokens that are already defined?
+        # TODO Why do we have to ignore tokens that are already defined?
         r'[^:\*\.\\{}\[\]]+'
         return t
 
@@ -53,9 +53,12 @@ class Lexer(object):
         t.lexer.skip(1)
 
     def tokenize(self, data):
+        tokens = []
         self.lexer.input(data)
         while True:
             token = self.lexer.token()
             if not token:
                 break
+            tokens.append(token)
             print token
+        return tokens

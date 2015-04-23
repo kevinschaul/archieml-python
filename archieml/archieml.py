@@ -6,6 +6,7 @@ import sys
 import cli
 
 import lexer
+import parser
 
 class ArchieML(object):
     """
@@ -19,12 +20,14 @@ class ArchieML(object):
         #self.cli = cli.CLI()
         #self.args = self.cli.parse_arguments(args)
         self.lexer = lexer.Lexer()
+        #self.parser = parser.Parser()
 
     def main(self):
         """
         TODO
         """
-        self.lexer.tokenize('{headline}: * this :ignore is a headline')
+        tokens = self.lexer.tokenize('{headline}: * this :ignore is a headline')
+        #self.parser.parse(tokens)
 
 def launch_new_instance():
     """
