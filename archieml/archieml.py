@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import json
 import os
 import sys
 
@@ -16,9 +17,9 @@ class ArchieML(object):
         """
         Get the options from cli.
         """
-        #self.cli = cli.CLI()
-        #self.args = self.cli.parse_arguments(args)
-        self.parser = parser.Parser(debug=True)
+        self.cli = cli.CLI()
+        self.args = self.cli.parse_arguments(args)
+        self.parser = parser.Parser(debug=self.args.debug)
 
     def main(self):
         """
@@ -26,8 +27,8 @@ class ArchieML(object):
         """
         archieml = 'key: This is a value'
         self.parser.tokenize(archieml)
-        self.parser.parse(archieml)
-        print self.parser.keys
+        parsed = self.parser.parse(archieml)
+        print(json.dumps(parsed))
 
 def launch_new_instance():
     """

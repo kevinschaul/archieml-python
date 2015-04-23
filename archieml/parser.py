@@ -86,3 +86,4 @@ class Parser(object):
 
     def parse(self, s):
         yacc.parse(s)
+        return self.keys
