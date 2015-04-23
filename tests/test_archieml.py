@@ -64,3 +64,19 @@ It's a nice key!
         output = self.parser.parse(archieml)
         self.assertEqual(expected, output)
 
+    def test_dotNotation(self):
+        archieml = """
+colors.red: #f00
+colors.green: #0f0
+colors.blue: #00f
+        """
+        expected = {
+            "colors": {
+                "red": "#f00",
+                "green": "#0f0",
+                "blue": "#00f"
+            }
+        }
+        output = self.parser.parse(archieml)
+        self.assertEqual(expected, output)
+
