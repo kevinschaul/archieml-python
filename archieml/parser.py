@@ -45,6 +45,7 @@ class Parser(object):
     t_ignore = ' \t'
 
     def __init__(self, debug=False):
+        self.debug = debug
         self.keys = {}
 
         lex.lex(module=self, debug=debug)
@@ -70,8 +71,9 @@ class Parser(object):
         return t
 
     def t_error(self, t):
-        print(t)
-        print('Illegal character \'%s\'' % t.value[0])
+        if self.debug:
+            print(t)
+            print('Illegal character \'%s\'' % t.value[0])
         t.lexer.skip(1)
 
     def p_document(self, p):
@@ -93,11 +95,12 @@ class Parser(object):
         self.keys[p[1]] = p[3]
 
     def p_error(self, p):
-        if p:
-            print(p)
-            print('Syntax error at \'%s\'' % p.value)
-        else:
-            print('Syntax error at EOF')
+        if self.debug:
+            if p:
+                print(p)
+                print('Syntax error at \'%s\'' % p.value)
+            else:
+                print('Syntax error at EOF')
 
     def tokenize(self, s):
         tokens = []

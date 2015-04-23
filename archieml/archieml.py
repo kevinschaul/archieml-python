@@ -34,6 +34,13 @@ class ArchieML(object):
 a: lowercase a
 A: uppercase A
 """
+        archieml = """
+This is a key:
+
+  key: value
+
+It's a nice key!
+"""
         tokens = self.parser.tokenize(archieml)
         if (self.args.debug):
             for t in tokens:

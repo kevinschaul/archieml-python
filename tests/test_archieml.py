@@ -50,3 +50,17 @@ A: uppercase A
         output = self.parser.parse(archieml)
         self.assertEqual(expected, output)
 
+    def test_ignoreNonKeys(self):
+        archieml = """
+This is a key:
+
+  key: value
+
+It's a nice key!
+        """
+        expected = {
+            "key": "value"
+        }
+        output = self.parser.parse(archieml)
+        self.assertEqual(expected, output)
+
