@@ -5,7 +5,6 @@ import sys
 
 import cli
 
-import lexer
 import parser
 
 class ArchieML(object):
@@ -19,16 +18,16 @@ class ArchieML(object):
         """
         #self.cli = cli.CLI()
         #self.args = self.cli.parse_arguments(args)
-        self.lexer = lexer.Lexer()
-        self.parser = parser.Parser()
+        self.parser = parser.Parser(debug=True)
 
     def main(self):
         """
         TODO
         """
-        tokens = self.lexer.tokenize('key: This is a value')
-        print tokens
-        self.parser.parse(tokens)
+        archieml = 'key: This is a value'
+        self.parser.tokenize(archieml)
+        self.parser.parse(archieml)
+        print self.parser.keys
 
 def launch_new_instance():
     """
