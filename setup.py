@@ -17,4 +17,5 @@ setup(
             'archieml = archieml.archieml:launch_new_instance',
         ],
     },
+    test_suite = 'tests.test_archieml',
 )
