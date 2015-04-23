@@ -44,8 +44,8 @@ It's a nice key!
         tokens = self.parser.tokenize(archieml)
         if (self.args.debug):
             for t in tokens:
-                print t
-            print
+                print(t)
+            print()
         parsed = self.parser.parse(archieml)
         print(json.dumps(parsed))
 
