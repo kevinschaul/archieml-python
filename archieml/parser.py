@@ -1,18 +1,16 @@
 import ply.yacc as yacc
 
+from lexer import tokens
+
 class Parser(object):
     """
     Parser for ArchieML
     """
 
+    keys = {}
+
     def __init__(self):
         self.parser = yacc.yacc(module=self, debug=True)
-
-    def p_key_expression(self, p):
-        """
-        key : TEXT
-        """
-        p[0] = p[1]
 
     def parse(self, tokens):
         self.parser.parse(tokens)
