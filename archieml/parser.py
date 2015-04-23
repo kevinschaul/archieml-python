@@ -5,6 +5,9 @@ class Parser(object):
     """
     TODO
     """
+    states = (
+        ('key', 'inclusive'),
+    )
     tokens = (
         'NEWLINE',
         'COLON',
@@ -24,7 +27,6 @@ class Parser(object):
     )
     precedence = ()
 
-    t_NEWLINE = r'\n+'
     t_COLON = r':'
     t_ASTERISK = r'\*'
     t_PERIOD = r'\.'
@@ -46,13 +48,19 @@ class Parser(object):
         lex.lex(module=self, debug=debug)
         yacc.yacc(module=self, debug=debug)
 
-    def t_TEXT(self, t):
-        # TODO Why do we have to ignore tokens that are already defined?
-        r'[^:\*\.\\{}\[\]\n]+$'
+    def t_NEWLINE(self, t):
+        r'[\n]+'
+        t.lexer.begin('key')
         return t
 
-    def t_IDENTIFIER(self, t):
-        r'[a-zA-Z0-9-_]+'
+    def t_key_IDENTIFIER(self, t):
+        r'([a-zA-Z0-9-_]+)'
+        t.lexer.begin('INITIAL')
+        return t
+
+    def t_TEXT(self, t):
+        # TODO Why do we have to ignore tokens that are already defined?
+        r'[^:\*\.\\{}\[\]\n]+'
         return t
 
     def t_error(self, t):
@@ -74,6 +82,12 @@ class Parser(object):
                   | IDENTIFIER COLON IDENTIFIER
         """
         self.keys[p[1]] = p[3]
+
+    def p_statement_newline(self, p):
+        """
+        statement : statement
+                  | statement NEWLINE
+        """
 
     def p_error(self, p):
         if p:

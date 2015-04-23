@@ -35,6 +35,9 @@ a: lowercase a
 A: uppercase A
 
         """
+        archieml = """1: value
+2:value
+"""
         tokens = self.parser.tokenize(archieml)
         print tokens
         parsed = self.parser.parse(archieml)
