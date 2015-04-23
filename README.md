@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/kevinschaul/archieml-python.svg?branch=master)](https://travis-ci.org/kevinschaul/archieml-python)
-
 # archieml-python
+
+[![Build Status](https://travis-ci.org/kevinschaul/archieml-python.svg?branch=master)](https://travis-ci.org/kevinschaul/archieml-python)
 
 Parse Archie Markup Language (ArchieML) documents into Python dicts.
 
