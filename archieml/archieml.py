@@ -25,22 +25,7 @@ class ArchieML(object):
         """
         TODO
         """
-        archieml = """1: value1
-2:value2
-3   : value3
- 4:    value4
-5:	value5	
-
-a: lowercase a
-A: uppercase A
-"""
-        archieml = """
-This is a key:
-
-  key: value
-
-It's a nice key!
-"""
+        archieml = 'key: this is a value'
         tokens = self.parser.tokenize(archieml)
         if (self.args.debug):
             for t in tokens:
