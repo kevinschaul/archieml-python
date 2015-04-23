@@ -14,6 +14,7 @@ class TestLexer(unittest.TestCase):
         output = str(self.parser.tokenize(archieml))
         self.assertEqual(expected, output)
 
+
 class TestParser(unittest.TestCase):
     def setUp(self):
         self.parser = Parser()
@@ -25,3 +26,27 @@ class TestParser(unittest.TestCase):
         }
         output = self.parser.parse(archieml)
         self.assertEqual(expected, output)
+
+    def test_surroundingWhitespace(self):
+        archieml = """
+        1: value
+2:value
+3   : value
+ 4:    value
+5:	value	
+
+a: lowercase a
+A: uppercase A
+        """
+        expected = {
+            "1": "value",
+            "2": "value",
+            "3": "value",
+            "4": "value",
+            "5": "value",
+            "a": "lowercase a",
+            "A": "uppercase A"
+        }
+        output = self.parser.parse(archieml)
+        self.assertEqual(expected, output)
+
