@@ -25,21 +25,20 @@ class ArchieML(object):
         """
         TODO
         """
-        archieml = """1: value
-2:value
-3   : value
- 4:    value
-5:	value	
+        archieml = """1: value1
+2:value2
+3   : value3
+ 4:    value4
+5:	value5	
 
 a: lowercase a
 A: uppercase A
-
-        """
-        archieml = """1: value
-2:value
 """
         tokens = self.parser.tokenize(archieml)
-        print tokens
+        if (self.args.debug):
+            for t in tokens:
+                print t
+            print
         parsed = self.parser.parse(archieml)
         print(json.dumps(parsed))
 

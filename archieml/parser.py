@@ -6,8 +6,9 @@ class Parser(object):
     TODO
     """
     states = (
-        ('key', 'inclusive'),
+        ('value', 'inclusive'),
     )
+
     tokens = (
         'NEWLINE',
         'COLON',
@@ -25,6 +26,7 @@ class Parser(object):
         'IDENTIFIER',
         'TEXT',
     )
+
     precedence = ()
 
     t_COLON = r':'
@@ -50,17 +52,21 @@ class Parser(object):
 
     def t_NEWLINE(self, t):
         r'[\n]+'
-        t.lexer.begin('key')
-        return t
+        pass
 
-    def t_key_IDENTIFIER(self, t):
+    def t_IDENTIFIER(self, t):
         r'([a-zA-Z0-9-_]+)'
-        t.lexer.begin('INITIAL')
+        t.lexer.begin('value')
+        # Strip whitespace surrounding IDENTIFIER
+        t.value = t.value.strip()
         return t
 
-    def t_TEXT(self, t):
+    def t_value_TEXT(self, t):
         # TODO Why do we have to ignore tokens that are already defined?
         r'[^:\*\.\\{}\[\]\n]+'
+        t.lexer.begin('INITIAL')
+        # Strip whitespace surrounding TEXT
+        t.value = t.value.strip()
         return t
 
     def t_error(self, t):
@@ -68,26 +74,23 @@ class Parser(object):
         print('Illegal character \'%s\'' % t.value[0])
         t.lexer.skip(1)
 
-
     def p_document(self, p):
         """
         document : statement
-                 | statement NEWLINE statement
+        """
+        pass
+
+    def p_statement_multiple(self, p):
+        """
+        statement : statement statement
         """
         pass
 
     def p_statement_assign(self, p):
         """
         statement : IDENTIFIER COLON TEXT
-                  | IDENTIFIER COLON IDENTIFIER
         """
         self.keys[p[1]] = p[3]
-
-    def p_statement_newline(self, p):
-        """
-        statement : statement
-                  | statement NEWLINE
-        """
 
     def p_error(self, p):
         if p:
