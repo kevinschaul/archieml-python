@@ -27,6 +27,13 @@ class ArchieML(object):
         """
         archieml = """1: value
 2:value
+3   : value
+ 4:    value
+5:	value	
+
+a: lowercase a
+A: uppercase A
+
         """
         tokens = self.parser.tokenize(archieml)
         print tokens

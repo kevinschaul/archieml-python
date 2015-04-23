@@ -6,7 +6,7 @@ class Parser(object):
     TODO
     """
     tokens = (
-        'SPACE',
+        'NEWLINE',
         'COLON',
         'ASTERISK',
         'PERIOD',
@@ -24,7 +24,7 @@ class Parser(object):
     )
     precedence = ()
 
-    t_SPACE = r'\ '
+    t_NEWLINE = r'\n+'
     t_COLON = r':'
     t_ASTERISK = r'\*'
     t_PERIOD = r'\.'
@@ -38,7 +38,7 @@ class Parser(object):
     t_CLOSE_SKIP = r':endskip'
     t_OPEN_IGNORE = r':ignore'
 
-    t_ignore = '\t'
+    t_ignore = ' \t'
 
     def __init__(self, debug=False):
         self.keys = {}
@@ -46,19 +46,27 @@ class Parser(object):
         lex.lex(module=self, debug=debug)
         yacc.yacc(module=self, debug=debug)
 
-    def t_IDENTIFIER(self, t):
-        r'[a-zA-Z0-9-_]+'
-        return t
-
     def t_TEXT(self, t):
         # TODO Why do we have to ignore tokens that are already defined?
-        r'[^:\*\.\\{}\[\]]+$'
+        r'[^:\*\.\\{}\[\]\n]+$'
+        return t
+
+    def t_IDENTIFIER(self, t):
+        r'[a-zA-Z0-9-_]+'
         return t
 
     def t_error(self, t):
         print(t)
         print('Illegal character \'%s\'' % t.value[0])
         t.lexer.skip(1)
+
+
+    def p_document(self, p):
+        """
+        document : statement
+                 | statement NEWLINE statement
+        """
+        pass
 
     def p_statement_assign(self, p):
         """
