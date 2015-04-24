@@ -15,5 +15,11 @@ Pull requests always welcome.
 
 ### Tests
 
+To run all tests:
+
     nosetests
+
+To run a specific test:
+
+    nosetests tests/test_archieml.py:TestParser.test_dotNotation
 

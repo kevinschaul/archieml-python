@@ -31,7 +31,6 @@ class Parser(object):
 
     t_COLON = r':'
     t_ASTERISK = r'\*'
-    t_PERIOD = r'\.'
     t_BACKSLASH = r'\\'
     t_OPEN_CBRACKET = r'{'
     t_CLOSE_CBRACKET = r'}'
@@ -62,6 +61,11 @@ class Parser(object):
         t.value = t.value.strip()
         return t
 
+    def t_PERIOD(self, t):
+        r'\.'
+        t.lexer.begin('INITIAL')
+        return t
+
     def t_value_TEXT(self, t):
         # TODO Why do we have to ignore tokens that are already defined?
         r'[^:\*\.\\{}\[\]\n]+'
@@ -90,9 +94,28 @@ class Parser(object):
 
     def p_statement_assign(self, p):
         """
-        statement : IDENTIFIER COLON TEXT
+        statement : key COLON TEXT
         """
-        self.keys[p[1]] = p[3]
+        stored = self.keys
+        num_keys = len(p[1])
+        for i, key in enumerate(p[1]):
+            if i == num_keys - 1:
+                stored[key] = p[3]
+            else:
+                stored[key] = stored.get(key, {})
+                stored = stored[key]
+
+    def p_key_multiple(self, p):
+        """
+        key : IDENTIFIER PERIOD IDENTIFIER
+        """
+        p[0] = (p[1], p[3],)
+
+    def p_key(self, p):
+        """
+        key : IDENTIFIER
+        """
+        p[0] = (p[1],)
 
     def p_error(self, p):
         if self.debug:

@@ -25,12 +25,16 @@ class ArchieML(object):
         """
         TODO
         """
-        archieml = 'key: this is a value'
+        archieml = """
+colors.red: #f00
+colors.green: #0f0
+colors.blue: #00f
+"""
         tokens = self.parser.tokenize(archieml)
         if (self.args.debug):
             for t in tokens:
                 print(t)
-            print()
+            print('')
         parsed = self.parser.parse(archieml)
         print(json.dumps(parsed))
 
