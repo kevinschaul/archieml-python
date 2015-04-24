@@ -47,9 +47,9 @@ class Parser(object):
         # Top-level key storage
         self.keys = {}
 
-        # Store the current scope (if any) here, e.g. when entering a block
+        # Store the current object (if any) here, e.g. when entering a block
         # defined by {key}.
-        self.current_scope = False
+        self.current_object = False
 
         lex.lex(module=self, debug=debug)
         yacc.yacc(module=self, debug=debug)
@@ -113,15 +113,15 @@ class Parser(object):
         # e.g.
         # colors.red -> ('colors', 'red',)
 
-        # Set `root` to the extent of the current scope (or to the top-level
+        # Set `root` to the extent of the current object (or to the top-level
         # store `self.keys` if there isn't one).
         #
         # e.g.
-        # If `current_scope` == ('colors', 'reds'), then set `root` to
+        # If `current_object` == ('colors', 'reds'), then set `root` to
         # `self.keys.colors.reds`.
         root = self.keys
-        if self.current_scope:
-            for i, key in enumerate(self.current_scope):
+        if self.current_object:
+            for i, key in enumerate(self.current_object):
                 root = root.get(key, {})
 
         # Follow the current key down its structure, and assign its value to
@@ -129,7 +129,7 @@ class Parser(object):
         num_keys = len(p[1])
         stored = root
         # If this key is not a dict, reassign it. This happens when redefining
-        # a value as a new scope.
+        # a value as a new object.
         if not isinstance(stored, dict):
             stored = {}
         for i, key in enumerate(p[1]):
@@ -139,20 +139,20 @@ class Parser(object):
                 stored[key] = stored.get(key, {})
                 stored = stored[key]
 
-        # Unwind the scope if it exists, setting the value to `self.keys`
-        if (self.current_scope):
-            num_keys = len(self.current_scope)
+        # Unwind the object if it exists, setting the value to `self.keys`
+        if (self.current_object):
+            num_keys = len(self.current_object)
             stored = self.keys
-            for i, key in enumerate(self.current_scope):
+            for i, key in enumerate(self.current_object):
                 if i == num_keys - 1:
                     stored[key] = root
                 else:
                     stored[key] = stored.get(key, {})
                     stored = stored[key]
 
-    def p_statement_scope(self, p):
+    def p_statement_object(self, p):
         """
-        statement : scope
+        statement : object
         """
         pass
 
@@ -168,17 +168,17 @@ class Parser(object):
         """
         p[0] = (p[1],)
 
-    def p_scope_begin(self, p):
+    def p_object_begin(self, p):
         """
-        scope : OPEN_CBRACKET key CLOSE_CBRACKET
+        object : OPEN_CBRACKET key CLOSE_CBRACKET
         """
-        self.current_scope = p[2]
+        self.current_object = p[2]
 
-    def p_scope_end(self, p):
+    def p_object_end(self, p):
         """
-        scope : OPEN_CBRACKET CLOSE_CBRACKET
+        object : OPEN_CBRACKET CLOSE_CBRACKET
         """
-        self.current_scope = False
+        self.current_object = False
 
     def p_error(self, p):
         if self.debug:
