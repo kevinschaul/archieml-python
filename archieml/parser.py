@@ -32,8 +32,6 @@ class Parser(object):
     t_COLON = r':'
     t_ASTERISK = r'\*'
     t_BACKSLASH = r'\\'
-    t_OPEN_CBRACKET = r'{'
-    t_CLOSE_CBRACKET = r'}'
     t_OPEN_SBRACKET = r'\['
     t_CLOSE_SBRACKET = r'\]'
     t_CLOSE_MULTILINE = r':end'
@@ -45,7 +43,13 @@ class Parser(object):
 
     def __init__(self, debug=False):
         self.debug = debug
+
+        # Top-level key storage
         self.keys = {}
+
+        # Store the current scope (if any) here, e.g. when entering a block
+        # defined by {key}.
+        self.current_scope = False
 
         lex.lex(module=self, debug=debug)
         yacc.yacc(module=self, debug=debug)
@@ -53,6 +57,15 @@ class Parser(object):
     def t_NEWLINE(self, t):
         r'[\n]+'
         pass
+
+    def t_OPEN_CBRACKET(self, t):
+        r'\{'
+        return t
+
+    def t_CLOSE_CBRACKET(self, t):
+        r'\}'
+        t.lexer.begin('INITIAL')
+        return t
 
     def t_IDENTIFIER(self, t):
         r'([a-zA-Z0-9-_]+)'
@@ -99,14 +112,28 @@ class Parser(object):
         # `key` is a tuple containing the nested structure of the key.
         # e.g.
         # colors.red -> ('colors', 'red',)
+
+        root = self.keys
+        if self.current_scope:
+            root = self.keys.get(self.current_scope, {})
+
         num_keys = len(p[1])
-        stored = self.keys
+        stored = root
         for i, key in enumerate(p[1]):
             if i == num_keys - 1:
                 stored[key] = p[3]
             else:
                 stored[key] = stored.get(key, {})
                 stored = stored[key]
+
+        if (self.current_scope):
+            self.keys[self.current_scope] = root
+
+    def p_statement_scope(self, p):
+        """
+        statement : scope
+        """
+        pass
 
     def p_key_multiple(self, p):
         """
@@ -119,6 +146,19 @@ class Parser(object):
         key : IDENTIFIER
         """
         p[0] = (p[1],)
+
+    def p_scope_begin(self, p):
+        """
+        scope : OPEN_CBRACKET IDENTIFIER CLOSE_CBRACKET
+        """
+        #self.current_scope = (p[2],)
+        self.current_scope = p[2]
+
+    def p_scope_end(self, p):
+        """
+        scope : OPEN_CBRACKET CLOSE_CBRACKET
+        """
+        self.current_scope = False
 
     def p_error(self, p):
         if self.debug:

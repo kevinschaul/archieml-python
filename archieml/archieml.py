@@ -26,9 +26,10 @@ class ArchieML(object):
         TODO
         """
         archieml = """
-colors.red: #f00
-colors.green: #0f0
-colors.blue: #00f
+{colors}
+red: #f00
+{numbers}
+one: 1
 """
         tokens = self.parser.tokenize(archieml)
         if (self.args.debug):
