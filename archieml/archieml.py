@@ -26,10 +26,12 @@ class ArchieML(object):
         TODO
         """
         archieml = """
-{colors}
-red: #f00
-{numbers}
-one: 1
+{colors.reds.something.else.long}
+crimpson: #dc142c
+{fonts}
+franklin: pro
+{fonts.franklin}
+italic: fancy
 """
         tokens = self.parser.tokenize(archieml)
         if (self.args.debug):
