@@ -96,8 +96,11 @@ class Parser(object):
         """
         statement : key COLON TEXT
         """
-        stored = self.keys
+        # `key` is a tuple containing the nested structure of the key.
+        # e.g.
+        # colors.red -> ('colors', 'red',)
         num_keys = len(p[1])
+        stored = self.keys
         for i, key in enumerate(p[1]):
             if i == num_keys - 1:
                 stored[key] = p[3]
