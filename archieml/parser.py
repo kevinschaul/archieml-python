@@ -30,10 +30,7 @@ class Parser(object):
     precedence = ()
 
     t_COLON = r':'
-    t_ASTERISK = r'\*'
     t_BACKSLASH = r'\\'
-    t_OPEN_SBRACKET = r'\['
-    t_CLOSE_SBRACKET = r'\]'
     t_CLOSE_MULTILINE = r':end'
     t_OPEN_SKIP = r':skip'
     t_CLOSE_SKIP = r':endskip'
@@ -65,6 +62,20 @@ class Parser(object):
     def t_CLOSE_CBRACKET(self, t):
         r'\}'
         t.lexer.begin('INITIAL')
+        return t
+
+    def t_OPEN_SBRACKET(self, t):
+        r'\['
+        return t
+
+    def t_CLOSE_SBRACKET(self, t):
+        r'\]'
+        t.lexer.begin('INITIAL')
+        return t
+
+    def t_ASTERISK(self, t):
+        r'\*'
+        t.lexer.begin('value')
         return t
 
     def t_IDENTIFIER(self, t):
@@ -156,6 +167,19 @@ class Parser(object):
         """
         pass
 
+    def p_statement_array(self, p):
+        """
+        statement : array
+        """
+        pass
+
+    def p_statement_array_assign(self, p):
+        """
+        statement : ASTERISK TEXT
+        """
+        if self.current_array:
+            self.current_array.append(p[2])
+
     def p_key_multiple(self, p):
         """
         key : key PERIOD key
@@ -179,6 +203,20 @@ class Parser(object):
         object : OPEN_CBRACKET CLOSE_CBRACKET
         """
         self.current_object = False
+
+    def p_array_begin(self, p):
+        """
+        array : OPEN_SBRACKET key CLOSE_SBRACKET
+        """
+        key = p[2][0]
+        self.current_array = self.keys.get(key, [])
+        self.keys[key] = self.current_array
+
+    def p_array_end(self, p):
+        """
+        array : OPEN_SBRACKET CLOSE_SBRACKET
+        """
+        self.current_array = False
 
     def p_error(self, p):
         if self.debug:
