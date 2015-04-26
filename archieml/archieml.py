@@ -28,6 +28,7 @@ class ArchieML(object):
         archieml = """
 [array]
 * item
+* another item
 []
 [array2]
 * item2

@@ -177,7 +177,7 @@ class Parser(object):
         """
         statement : ASTERISK TEXT
         """
-        if self.current_array:
+        if hasattr(self, 'current_array'):
             self.current_array.append(p[2])
 
     def p_key_multiple(self, p):
