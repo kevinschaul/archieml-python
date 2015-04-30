@@ -19,19 +19,18 @@ class Parser(object):
         'CLOSE_CBRACKET',
         'OPEN_SBRACKET',
         'CLOSE_SBRACKET',
-        'CLOSE_MULTILINE',
         'OPEN_SKIP',
         'CLOSE_SKIP',
         'OPEN_IGNORE',
         'IDENTIFIER',
         'TEXT',
+        'MULTILINE_TEXT',
     )
 
     precedence = ()
 
     t_COLON = r':'
     t_BACKSLASH = r'\\'
-    t_CLOSE_MULTILINE = r':end'
     t_OPEN_SKIP = r':skip'
     t_CLOSE_SKIP = r':endskip'
     t_OPEN_IGNORE = r':ignore'
@@ -90,6 +89,14 @@ class Parser(object):
         t.lexer.begin('INITIAL')
         return t
 
+    def t_value_MULTILINE_TEXT(self, t):
+        # TODO Why do we have to ignore tokens that are already defined?
+        r'(?s)[^:\*\.\\{}\[\]]+?:end'
+        t.lexer.begin('INITIAL')
+        # Strip off trailing ":end" and whitespace
+        t.value = t.value[:-4].strip()
+        return t
+
     def t_value_TEXT(self, t):
         # TODO Why do we have to ignore tokens that are already defined?
         r'[^:\*\.\\{}\[\]\n]+'
@@ -118,7 +125,7 @@ class Parser(object):
 
     def p_statement_assign(self, p):
         """
-        statement : key COLON TEXT
+        statement : key COLON value
         """
         # `key` is a tuple containing the nested structure of the key.
         # e.g.
@@ -175,7 +182,7 @@ class Parser(object):
 
     def p_statement_array_assign(self, p):
         """
-        statement : ASTERISK TEXT
+        statement : ASTERISK value
         """
         if hasattr(self, 'current_array'):
             self.current_array.append(p[2])
@@ -191,6 +198,13 @@ class Parser(object):
         key : IDENTIFIER
         """
         p[0] = (p[1],)
+
+    def p_value(self, p):
+        """
+        value : TEXT
+              | MULTILINE_TEXT
+        """
+        p[0] = p[1]
 
     def p_object_begin(self, p):
         """

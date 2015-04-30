@@ -26,16 +26,13 @@ class ArchieML(object):
         TODO
         """
         archieml = """
-[array]
-* item
-* another item
-[]
-[array2]
-* item2
-[]
+key: value
+ More value
+:end
 """
         tokens = self.parser.tokenize(archieml)
         if (self.args.debug):
+            print('')
             for t in tokens:
                 print(t)
             print('')
