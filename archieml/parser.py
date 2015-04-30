@@ -202,16 +202,18 @@ class Parser(object):
                 print('Syntax error at EOF')
 
     def assignValue(self, _key, _value):
-        # `_key` is a tuple containing the nested structure of the key.
-        # e.g.
-        # colors.red -> ('colors', 'red',)
+        """
+         `_key` is a tuple containing the nested structure of the key.
+         e.g.
+         colors.red -> ('colors', 'red',)
 
-        # Set `root` to the extent of the current object (or to the top-level
-        # store `self.keys` if there isn't one).
-        #
-        # e.g.
-        # If `current_object` == ('colors', 'reds'), then set `root` to
-        # `self.keys.colors.reds`.
+         Set `root` to the extent of the current object (or to the top-level
+         store `self.keys` if there isn't one).
+
+         e.g.
+         If `current_object` == ('colors', 'reds'), then set `root` to
+         `self.keys.colors.reds`.
+        """
         root = self.keys
         if self.current_object:
             for i, key in enumerate(self.current_object):
