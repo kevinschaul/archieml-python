@@ -127,46 +127,7 @@ class Parser(object):
         """
         statement : key COLON value
         """
-        # `key` is a tuple containing the nested structure of the key.
-        # e.g.
-        # colors.red -> ('colors', 'red',)
-
-        # Set `root` to the extent of the current object (or to the top-level
-        # store `self.keys` if there isn't one).
-        #
-        # e.g.
-        # If `current_object` == ('colors', 'reds'), then set `root` to
-        # `self.keys.colors.reds`.
-        root = self.keys
-        if self.current_object:
-            for i, key in enumerate(self.current_object):
-                root = root.get(key, {})
-
-        # Follow the current key down its structure, and assign its value to
-        # `root`.
-        num_keys = len(p[1])
-        stored = root
-        # If this key is not a dict, reassign it. This happens when redefining
-        # a value as a new object.
-        if not isinstance(stored, dict):
-            stored = {}
-        for i, key in enumerate(p[1]):
-            if i == num_keys - 1:
-                stored[key] = p[3]
-            else:
-                stored[key] = stored.get(key, {})
-                stored = stored[key]
-
-        # Unwind the object if it exists, setting the value to `self.keys`
-        if (self.current_object):
-            num_keys = len(self.current_object)
-            stored = self.keys
-            for i, key in enumerate(self.current_object):
-                if i == num_keys - 1:
-                    stored[key] = root
-                else:
-                    stored[key] = stored.get(key, {})
-                    stored = stored[key]
+        self.assignValue(p[1], p[3])
 
     def p_statement_object(self, p):
         """
@@ -239,6 +200,48 @@ class Parser(object):
                 print('Syntax error at \'%s\'' % p.value)
             else:
                 print('Syntax error at EOF')
+
+    def assignValue(self, _key, _value):
+        # `_key` is a tuple containing the nested structure of the key.
+        # e.g.
+        # colors.red -> ('colors', 'red',)
+
+        # Set `root` to the extent of the current object (or to the top-level
+        # store `self.keys` if there isn't one).
+        #
+        # e.g.
+        # If `current_object` == ('colors', 'reds'), then set `root` to
+        # `self.keys.colors.reds`.
+        root = self.keys
+        if self.current_object:
+            for i, key in enumerate(self.current_object):
+                root = root.get(key, {})
+
+        # Follow the current key down its structure, and assign its value to
+        # `root`.
+        num_keys = len(_key)
+        stored = root
+        # If this key is not a dict, reassign it. This happens when redefining
+        # a value as a new object.
+        if not isinstance(stored, dict):
+            stored = {}
+        for i, key in enumerate(_key):
+            if i == num_keys - 1:
+                stored[key] = _value
+            else:
+                stored[key] = stored.get(key, {})
+                stored = stored[key]
+
+        # Unwind the object if it exists, setting the value to `self.keys`
+        if (self.current_object):
+            num_keys = len(self.current_object)
+            stored = self.keys
+            for i, key in enumerate(self.current_object):
+                if i == num_keys - 1:
+                    stored[key] = root
+                else:
+                    stored[key] = stored.get(key, {})
+                    stored = stored[key]
 
     def tokenize(self, s):
         tokens = []
