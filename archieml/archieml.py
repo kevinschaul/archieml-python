@@ -4,9 +4,12 @@ import json
 import os
 import sys
 
-import cli
+import ply.lex as lex
+import ply.yacc as yacc
 
-import parser
+import cli
+import tokens
+import grammar
 
 class ArchieML(object):
     """
@@ -19,25 +22,24 @@ class ArchieML(object):
         """
         self.cli = cli.CLI()
         self.args = self.cli.parse_arguments(args)
-        self.parser = parser.Parser(debug=self.args.debug)
 
     def main(self):
         """
         TODO
         """
         archieml = """
-key: value
- More value
-:end
+er
 """
-        tokens = self.parser.tokenize(archieml)
-        if (self.args.debug):
-            print('')
-            for t in tokens:
-                print(t)
-            print('')
-        parsed = self.parser.parse(archieml)
-        print(json.dumps(parsed))
+        aml_tokens = lex.lex(module=tokens, debug=self.args.debug)
+        #print(aml_tokens)
+        ts = tokens.tokenize(archieml)
+        for token in ts:
+            print(token)
+        aml_grammar = yacc.yacc(module=grammar, debug=self.args.debug)
+        aml_tree = aml_grammar.parse(archieml, lexer=aml_tokens, debug=self.args.debug)
+        print(json.dumps(aml_tree, indent=4))
+        #result = interpreter.interpret(aml_tree)
+        #print(json.dumps(result))
 
 def launch_new_instance():
     """
